@@ -9,11 +9,20 @@ const projects = [{
   tasks:["Nova terefa"]
 }]
 
+function checkProjectExists(req, res,next){
+  const {id} = req.params
+
+  if(projects.indexOf(id)){
+    res.status(400).json({error: "project does not exist"})
+  }
+
+  return next();
+}
 server.get('/projects', (req, res)=>{
   return res.json(projects);
 } )
 
-server.get('/projects/:id', (req, res)=>{
+server.get('/projects/:id',  checkProjectExists, (req, res)=>{
   const {id} = req.params
   return res.json(projects[id]);
 } )
@@ -32,7 +41,7 @@ server.post('/projects',(req,res)=>{
 
 })
 
-server.put('/projects/:id', (req, res)=>{
+server.put('/projects/:id', checkProjectExists,(req, res)=>{
   const{id} = req.params;
   const {title} = req.body;
 
@@ -50,7 +59,7 @@ server.post('/projects/:id/tasks', (req, res)=>{
   return res.json(projects)
 })
 
-server.delete('/projects/:id', (req, res)=>{
+server.delete('/projects/:id',checkProjectExists, (req, res)=>{
   const {id } = req.params;
 
   projects.splice(id, 1);
